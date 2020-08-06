@@ -36,8 +36,8 @@ public class UserControllerV2 {
 	@Autowired
 	private UserRepository userRepository;
 
-	@ApiOperation(value = "Get all users in the DB", response = User.class)
-	@ApiResponses(value = { @ApiResponse(code = 200, message = "Successfully retrieved a user"),
+	@ApiOperation(value = "Get all users in the DB", response = User.class, responseContainer = "List")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Successfully retrieved a list of users"),
 			@ApiResponse(code = 400, message = "No user list retrieved without a 'State'") })
 	@GetMapping("/users")
 	public ResponseEntity<List<User>> getUsers(@RequestParam(value = "state", required = false) String state) {
@@ -47,14 +47,15 @@ public class UserControllerV2 {
 		if (state != null) {
 			users = (List<User>) userRepository.findByState(state);
 		} else {
+			users = (List<User>) userRepository.findAll();
 			return new ResponseEntity<List<User>>(users, HttpStatus.BAD_REQUEST);
 		}
 		return new ResponseEntity<List<User>>(users, HttpStatus.OK);
 	}
 
-	@ApiOperation(value = "Get a single user by an ID from the DB", response = User.class, responseContainer = "List")
-	@ApiResponses(value = { @ApiResponse(code = 200, message = "Successfully retrieved user list"),
-			@ApiResponse(code = 401, message = "User was not found in the DB") })
+	@ApiOperation(value = "Get a single user by an ID from the DB", response = User.class)
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Successfully retrieved user"),
+			@ApiResponse(code = 404, message = "User was not found in the DB") })
 	@GetMapping("/users/{id}")
 	public ResponseEntity<Optional<User>> getUserById(@PathVariable(value = "id") Long id) {
 
@@ -67,7 +68,7 @@ public class UserControllerV2 {
 	}
 
 	@ApiOperation(value = "Create a new user and add to DB", response = Void.class)
-	@ApiResponses(value = { @ApiResponse(code = 201, message = "Successfully created a new user in DB"),
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Successfully created a new user in DB"),
 			@ApiResponse(code = 400, message = "Invalid user input, user was not created") })
 	@PostMapping("/users")
 	public ResponseEntity<Void> createUser(@RequestBody @Valid User user, BindingResult bindingResult) {

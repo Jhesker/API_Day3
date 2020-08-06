@@ -36,8 +36,8 @@ public class UserControllerV1 {
 	@Autowired
 	private UserRepository userRepository;
 
-	@ApiOperation(value = "Get all users in the DB", response = User.class)
-	@ApiResponses(value = { @ApiResponse(code = 200, message = "Successfully retrieved a user") })
+	@ApiOperation(value = "Get all users in the DB", response = User.class, responseContainer = "List")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Successfully retrieved a list of users") })
 	@GetMapping("/users")
 	public ResponseEntity<List<User>> getUsers(@RequestParam(value = "state", required = false) String state) {
 
@@ -51,9 +51,9 @@ public class UserControllerV1 {
 		return new ResponseEntity<List<User>>(users, HttpStatus.OK);
 	}
 
-	@ApiOperation(value = "Get a single user by an ID from the DB", response = User.class, responseContainer = "List")
-	@ApiResponses(value = { @ApiResponse(code = 200, message = "Successfully retrieved user list"),
-			@ApiResponse(code = 401, message = "User was not found in the DB") })
+	@ApiOperation(value = "Get a single user by an ID from the DB", response = User.class)
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Successfully retrieved user"),
+			@ApiResponse(code = 404, message = "User was not found in the DB") })
 	@GetMapping("/users/{id}")
 	public ResponseEntity<Optional<User>> getUserById(@PathVariable(value = "id") Long id) {
 
